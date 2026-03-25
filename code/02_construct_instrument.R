@@ -3,9 +3,19 @@
 # Build regional prescribing instruments (leave-one-out rates)
 # -------------------------------
 
-library(tidyverse)
+setup_file <- if (file.exists(file.path("code", "00_project_setup.R"))) {
+  file.path("code", "00_project_setup.R")
+} else if (file.exists("00_project_setup.R")) {
+  "00_project_setup.R"
+} else {
+  stop("Could not find code/00_project_setup.R", call. = FALSE)
+}
+source(setup_file)
 
-root_dir   <- "/Users/aarushbathula/Developer/mental-health-meds-bmi-iv"
+root_dir <- project_root()
+ensure_project_dirs(root_dir)
+load_required_packages(c("dplyr"))
+
 clean_path <- file.path(root_dir, "data", "hse_2019_clean.rds")
 iv_path    <- file.path(root_dir, "data", "hse_2019_iv.rds")
 

@@ -3,12 +3,21 @@
 # Clean HSE 2019 and build main analysis dataset
 # -------------------------------
 
-library(tidyverse)
-library(haven)
+setup_file <- if (file.exists(file.path("code", "00_project_setup.R"))) {
+  file.path("code", "00_project_setup.R")
+} else if (file.exists("00_project_setup.R")) {
+  "00_project_setup.R"
+} else {
+  stop("Could not find code/00_project_setup.R", call. = FALSE)
+}
+source(setup_file)
+
+root_dir <- project_root()
+ensure_project_dirs(root_dir)
+load_required_packages(c("dplyr", "haven"))
 
 # 0. Paths ------------------------------------------------------------
 
-root_dir   <- "/Users/aarushbathula/Developer/mental-health-meds-bmi-iv"
 raw_path   <- file.path(root_dir, "data", "hse_2019.dta")
 clean_path <- file.path(root_dir, "data", "hse_2019_clean.rds")
 
@@ -230,7 +239,6 @@ print(table(hse$gor))
 
 # 7. Save cleaned dataset ---------------------------------------------
 
-dir.create(file.path(root_dir, "data"), showWarnings = FALSE)
 saveRDS(hse, clean_path)
 
 message("Saved cleaned dataset to: ", clean_path)

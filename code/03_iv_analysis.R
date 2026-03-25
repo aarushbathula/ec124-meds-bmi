@@ -3,15 +3,21 @@
 # Baseline OLS, first stage, reduced form, and 2SLS
 # -------------------------------
 
-library(tidyverse)
-library(fixest)        # install.packages("fixest")
-library(modelsummary)  # install.packages("modelsummary")
+setup_file <- if (file.exists(file.path("code", "00_project_setup.R"))) {
+  file.path("code", "00_project_setup.R")
+} else if (file.exists("00_project_setup.R")) {
+  "00_project_setup.R"
+} else {
+  stop("Could not find code/00_project_setup.R", call. = FALSE)
+}
+source(setup_file)
 
-root_dir  <- "/Users/aarushbathula/Developer/mental-health-meds-bmi-iv"
+root_dir <- project_root()
+ensure_project_dirs(root_dir)
+load_required_packages(c("dplyr", "fixest"))
+
 iv_path   <- file.path(root_dir, "data", "hse_2019_iv.rds")
 out_table <- file.path(root_dir, "output", "tables")
-
-dir.create(out_table, recursive = TRUE, showWarnings = FALSE)
 
 dat <- readRDS(iv_path)
 
@@ -87,18 +93,16 @@ saveRDS(
 
 # Export LaTeX tables -------------------------------------------------
 
-modelsummary(
+etable(
   list("OLS" = m_ols, "2SLS" = m_iv),
-  statistic = c("std.error", "p.value"),
-  gof_omit  = "IC|Log",
-  output    = file.path(out_table, "table_main_effects.tex")
+  tex  = TRUE,
+  file = file.path(out_table, "table_main_effects.tex")
 )
 
-modelsummary(
+etable(
   list("First stage" = m_fs, "Reduced form" = m_rf),
-  statistic = c("std.error", "p.value"),
-  gof_omit  = "IC|Log",
-  output    = file.path(out_table, "table_firststage_reducedform.tex")
+  tex  = TRUE,
+  file = file.path(out_table, "table_firststage_reducedform.tex")
 )
 
 message("Main IV analysis complete. Tables written to ", out_table)

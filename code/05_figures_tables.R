@@ -3,19 +3,24 @@
 # Figures: instrument variation, first-stage plot, model tables
 # -------------------------------
 
-library(tidyverse)
-library(fixest)
-library(modelsummary)
+setup_file <- if (file.exists(file.path("code", "00_project_setup.R"))) {
+  file.path("code", "00_project_setup.R")
+} else if (file.exists("00_project_setup.R")) {
+  "00_project_setup.R"
+} else {
+  stop("Could not find code/00_project_setup.R", call. = FALSE)
+}
+source(setup_file)
 
-root_dir <- "/Users/aarushbathula/Developer/mental-health-meds-bmi-iv"
+root_dir <- project_root()
+ensure_project_dirs(root_dir)
+load_required_packages(c("dplyr", "ggplot2", "fixest"))
+
 iv_path  <- file.path(root_dir, "data", "hse_2019_iv.rds")
 mod_path <- file.path(root_dir, "data", "models_main.rds")
 
 fig_dir  <- file.path(root_dir, "output", "figures")
 tab_dir  <- file.path(root_dir, "output", "tables")
-
-dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
-dir.create(tab_dir, recursive = TRUE, showWarnings = FALSE)
 
 dat <- readRDS(iv_path)
 models_main <- readRDS(mod_path)
@@ -84,10 +89,10 @@ ggsave(file.path(fig_dir, "fig_firststage_binned.pdf"), p2)
 # 3. Combined model table for the paper
 # ------------------------------------------------------------
 
-modelsummary(
-  models_main,
-  gof_omit = "IC|Log",
-  output   = file.path(tab_dir, "table_all_models.tex")
+etable(
+  setNames(models_main, c("OLS", "First stage", "Reduced form", "2SLS")),
+  tex  = TRUE,
+  file = file.path(tab_dir, "table_all_models.tex")
 )
 
 message("Figures saved to: ", fig_dir)

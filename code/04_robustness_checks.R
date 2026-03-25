@@ -3,15 +3,21 @@
 # Robustness: alt instruments, multiple IVs, heterogeneity, placebo
 # -------------------------------
 
-library(tidyverse)
-library(fixest)
-library(modelsummary)
+setup_file <- if (file.exists(file.path("code", "00_project_setup.R"))) {
+  file.path("code", "00_project_setup.R")
+} else if (file.exists("00_project_setup.R")) {
+  "00_project_setup.R"
+} else {
+  stop("Could not find code/00_project_setup.R", call. = FALSE)
+}
+source(setup_file)
 
-root_dir <- "/Users/aarushbathula/Developer/mental-health-meds-bmi-iv"
+root_dir <- project_root()
+ensure_project_dirs(root_dir)
+load_required_packages(c("dplyr", "fixest"))
+
 iv_path  <- file.path(root_dir, "data", "hse_2019_iv.rds")
 tab_dir  <- file.path(root_dir, "output", "tables")
-
-dir.create(tab_dir, recursive = TRUE, showWarnings = FALSE)
 
 dat <- readRDS(iv_path)
 
@@ -116,25 +122,25 @@ m_placebo <- feols(
 
 # Export tables -------------------------------------------------------
 
-modelsummary(
+etable(
   list("IV: SHA instrument" = m_iv_sha,
        "IV: GOR + SHA instruments" = m_iv_multi),
-  gof_omit = "IC|Log",
-  output   = file.path(tab_dir, "table_iv_robustness_instruments.tex")
+  tex  = TRUE,
+  file = file.path(tab_dir, "table_iv_robustness_instruments.tex")
 )
 
-modelsummary(
+etable(
   list("IV: Antidepressants" = m_iv_ad,
        "IV: Antipsychotics"  = m_iv_ap,
        "IV: Hypnotics"       = m_iv_hy),
-  gof_omit = "IC|Log",
-  output   = file.path(tab_dir, "table_iv_heterogeneity.tex")
+  tex  = TRUE,
+  file = file.path(tab_dir, "table_iv_heterogeneity.tex")
 )
 
-modelsummary(
+etable(
   list("Placebo: non-medicated sample" = m_placebo),
-  gof_omit = "IC|Log",
-  output   = file.path(tab_dir, "table_placebo.tex")
+  tex  = TRUE,
+  file = file.path(tab_dir, "table_placebo.tex")
 )
 
 message("Robustness checks complete. Tables written to ", tab_dir)
