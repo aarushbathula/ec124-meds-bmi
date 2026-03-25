@@ -1,0 +1,10 @@
+Test,Value
+First-stage F-statistic,16.08
+Stock-Yogo CV (10% max IV size),16.38
+Stock-Yogo CV (20% max IV size),6.66
+Instrument strength,Moderate
+Wu-Hausman p-value,0.034
+Sargan-Hansen p-value (multi-IV),NA
+OLS estimate,1.76
+2SLS estimate (cell IV),17.8
+2SLS SE (cell IV),7.14

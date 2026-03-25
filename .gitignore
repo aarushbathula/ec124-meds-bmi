@@ -1,0 +1,6 @@
+.DS_Store
+.Rhistory
+
+# Keep data local-only
+data/*
+!data/.gitkeep
