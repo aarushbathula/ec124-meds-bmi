@@ -35,7 +35,7 @@ source("code/master.R")
 - Place the raw input file at `data/hse_2019.dta`
 - Keep the HSE 2019 documentation PDF alongside the raw data for reference
 
-See [data/README.md](/Users/aarushbathula/Developer/modules/ec124-meds-bmi/data/README.md) for the expected local file layout.
+See [data/README.md](data/README.md) for the expected local file layout.
 
 ## Software and Dependencies
 

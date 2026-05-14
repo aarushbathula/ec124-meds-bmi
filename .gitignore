@@ -23,6 +23,10 @@ output/logs/*
 !output/tables/.gitkeep
 !output/logs/.gitkeep
 
+# Generated paper artifacts
+paper/*.pdf
+paper/overleaf/**/rplots/*
+
 # LaTeX build artifacts
 *.aux
 *.toc
